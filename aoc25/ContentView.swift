@@ -6,18 +6,67 @@
 //
 
 import SwiftUI
+internal import UniformTypeIdentifiers
+
+func processString(str: String){
+    
+}
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+    @State var isShowing = false
+    @State private var myFile: String = ""
+    @State var result: String = ""
+    
+        var body: some View {
+            HStack{
+                Text("import")
+                Spacer()
+                Image(systemName: myFile != "" ? "externaldrive.badge.checkmark" : "externaldrive.trianglebadge.exclamationmark")
+            }
+            HStack{
+                Text("result")
+                Spacer()
+                Text(result)
+            }
+            VStack {
+                Button {
+                    isShowing.toggle()
+                } label: {
+                    Text("import")
+                }
+                .fileImporter(isPresented: $isShowing, allowedContentTypes: [.item], allowsMultipleSelection: true, onCompletion: { results in
+                    
+                    switch results {
+                    case .success(let files):
+                        files.forEach { file in
+                           // gain access to the directory
+                           let gotAccess = file.startAccessingSecurityScopedResource()
+                           if !gotAccess { return }
+                           // access the directory URL
+                           // (read templates in the directory, make a bookmark, etc.)
+                            print(file.lines)
+                            do {
+                                let contents = try String(contentsOf: file, encoding: .utf8)
+                               myFile = contents
+                                processString(str: contents)
+                           } catch {
+                               print("Error with the file: \(error)")
+                           }                           // release access
+                           file.stopAccessingSecurityScopedResource()
+                       }
+                        
+                    case .failure(let error):
+                        print(error)
+                    }
+                    
+                })
+
+            }
+            
         }
-        .padding()
-    }
 }
+
+
 
 #Preview {
     ContentView()
