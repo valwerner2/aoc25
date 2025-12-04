@@ -14,14 +14,17 @@ func processString(str: String) -> String{
     var result = 0;
     
     lines.forEach{ line in
+        var dir = 0
         let curNum  = Int(line[line.index(line.startIndex, offsetBy: 1)...]) ?? 0
         if line.contains("R"){
-            num += curNum
+            dir = -1
         }else{
-            num -= curNum
+            dir = 1
         }
-        num = num % 100
-        if num == 0{result+=1}
+        for _ in 0..<curNum{
+            num = (num + dir) % 100
+            if num == 0{result+=1}
+        }
     }
     return String(result)
 }
