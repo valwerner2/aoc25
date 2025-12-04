@@ -8,8 +8,22 @@
 import SwiftUI
 internal import UniformTypeIdentifiers
 
-func processString(str: String){
+func processString(str: String) -> String{
+    let lines = str.split{$0.isNewline}.map { String($0) }
+    var num = 50;
+    var result = 0;
     
+    lines.forEach{ line in
+        let curNum  = Int(line[line.index(line.startIndex, offsetBy: 1)...]) ?? 0
+        if line.contains("R"){
+            num += curNum
+        }else{
+            num -= curNum
+        }
+        num = num % 100
+        if num == 0{result+=1}
+    }
+    return String(result)
 }
 
 struct ContentView: View {
@@ -34,7 +48,7 @@ struct ContentView: View {
                 } label: {
                     Text("import")
                 }
-                .fileImporter(isPresented: $isShowing, allowedContentTypes: [.item], allowsMultipleSelection: true, onCompletion: { results in
+                .fileImporter(isPresented: $isShowing, allowedContentTypes: [.item], allowsMultipleSelection: false, onCompletion: { results in
                     
                     switch results {
                     case .success(let files):
@@ -48,7 +62,7 @@ struct ContentView: View {
                             do {
                                 let contents = try String(contentsOf: file, encoding: .utf8)
                                myFile = contents
-                                processString(str: contents)
+                                result = processString(str: contents)
                            } catch {
                                print("Error with the file: \(error)")
                            }                           // release access
