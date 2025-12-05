@@ -8,87 +8,27 @@
 import SwiftUI
 internal import UniformTypeIdentifiers
 
-func isValid(num: Int) -> Bool{
-    var testLenght = 1
-    let numStr = String(num)
-    
-    while(testLenght <= numStr.count/2)
-    {
-        
-        
-        if(numStr.count % testLenght == 0){
-            var current = testLenght
-            let startBound = numStr.index(numStr.startIndex, offsetBy: testLenght)
-            let baseNum = String(numStr[numStr.startIndex..<startBound])
-            //print ("---" + numStr + "---")
-            //print(baseNum + "?")
-            var found = 0
-            while (current + testLenght <= numStr.count)
-            {
-                let startComp = numStr.index(numStr.startIndex, offsetBy: current)
-                let endComp = numStr.index(numStr.startIndex, offsetBy: current + testLenght)
-                
-                let compNum = String(numStr[startComp..<endComp])
-                
-                //print(compNum +  " - !")
-                if(baseNum == compNum) {found += 1}
-                current += testLenght
-            }
-            //print("-----")
-            if found == numStr.count / testLenght - 1 {return false}
+func findMax(bank: [Int], n: Int) -> String {
+    if bank.isEmpty || n == 0 {return ""}
+    if let currentMax = bank.dropLast(n - 1).max(){
+        if let indexMax = bank.firstIndex(of: currentMax){
+            return String(currentMax) + String(findMax(bank: Array(bank.dropFirst(indexMax + 1)), n: n - 1))
         }
-        testLenght += 1
     }
-    /*
-    print(numStr)
-    while(testLenght * 2 <= numStr.count)
-    {
-        var base = 0
-        while base + testLenght*2 <= numStr.count{
-            let start = numStr.index(numStr.startIndex, offsetBy: base)
-            let seperator = numStr.index(numStr.startIndex, offsetBy: base + testLenght)
-            
-            let end = numStr.index(numStr.startIndex, offsetBy: base + testLenght*2)
-            
-            let firstNum = String(numStr[start..<seperator])
-            let secondNum = String(numStr[seperator..<end])
-            
-            //print(firstNum + "--" + secondNum)
-            if(firstNum == secondNum) {return false}
-            
-            base += 1
-        }
-        testLenght += 1
-     
-    }
-     */
-    
-    
-    return true
+    return ""
 }
 
 func processString(str: String) -> String{
-    let ranges = str.split{$0 == ","}.map { String($0) }
+    let banks = str.split{$0.isNewline}.map { String($0) }
     var result = 0;
     
-    ranges.forEach{ range in
-        print(range)
-        //let curNum  = Int(line[line.index(line.startIndex, offsetBy: 1)...]) ?? 0
-        let pair = range.split{$0 == "-"}.map { Int($0) }
-        print(pair)
-        if let start: Int = pair[0]{
-            if let end: Int = pair[1]{
-                
-                for i in start...end {
-                    let valid = isValid(num: i)
-                    result += valid ? 0 : i
-                    if(!valid){print(i)}
-                }
-            }
+    
+    banks.forEach{ bank in
+        let intBank = bank.compactMap{Int(String($0))}
+        
+        result += Int(findMax(bank: intBank, n: 12)) ?? 0
+        
         }
-        
-        
-    }
     return String(result)
 }
 
