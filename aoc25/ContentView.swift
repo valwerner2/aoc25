@@ -12,13 +12,32 @@ func isValid(num: Int) -> Bool{
     var testLenght = 1
     let numStr = String(num)
     
-    if(numStr.count % 2 == 0){
-        let seperator = numStr.index(numStr.startIndex, offsetBy: numStr.count / 2)
+    while(testLenght <= numStr.count/2)
+    {
         
-        let firstNum = String(numStr[numStr.startIndex..<seperator])
-        let secondNum = String(numStr[seperator..<numStr.endIndex])
         
-        if(firstNum == secondNum) {return false}
+        if(numStr.count % testLenght == 0){
+            var current = testLenght
+            let startBound = numStr.index(numStr.startIndex, offsetBy: testLenght)
+            let baseNum = String(numStr[numStr.startIndex..<startBound])
+            //print ("---" + numStr + "---")
+            //print(baseNum + "?")
+            var found = 0
+            while (current + testLenght <= numStr.count)
+            {
+                let startComp = numStr.index(numStr.startIndex, offsetBy: current)
+                let endComp = numStr.index(numStr.startIndex, offsetBy: current + testLenght)
+                
+                let compNum = String(numStr[startComp..<endComp])
+                
+                //print(compNum +  " - !")
+                if(baseNum == compNum) {found += 1}
+                current += testLenght
+            }
+            //print("-----")
+            if found == numStr.count / testLenght - 1 {return false}
+        }
+        testLenght += 1
     }
     /*
     print(numStr)
