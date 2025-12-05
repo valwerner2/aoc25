@@ -8,23 +8,67 @@
 import SwiftUI
 internal import UniformTypeIdentifiers
 
+func isValid(num: Int) -> Bool{
+    var testLenght = 1
+    let numStr = String(num)
+    
+    if(numStr.count % 2 == 0){
+        let seperator = numStr.index(numStr.startIndex, offsetBy: numStr.count / 2)
+        
+        let firstNum = String(numStr[numStr.startIndex..<seperator])
+        let secondNum = String(numStr[seperator..<numStr.endIndex])
+        
+        if(firstNum == secondNum) {return false}
+    }
+    /*
+    print(numStr)
+    while(testLenght * 2 <= numStr.count)
+    {
+        var base = 0
+        while base + testLenght*2 <= numStr.count{
+            let start = numStr.index(numStr.startIndex, offsetBy: base)
+            let seperator = numStr.index(numStr.startIndex, offsetBy: base + testLenght)
+            
+            let end = numStr.index(numStr.startIndex, offsetBy: base + testLenght*2)
+            
+            let firstNum = String(numStr[start..<seperator])
+            let secondNum = String(numStr[seperator..<end])
+            
+            //print(firstNum + "--" + secondNum)
+            if(firstNum == secondNum) {return false}
+            
+            base += 1
+        }
+        testLenght += 1
+     
+    }
+     */
+    
+    
+    return true
+}
+
 func processString(str: String) -> String{
-    let lines = str.split{$0.isNewline}.map { String($0) }
-    var num = 50;
+    let ranges = str.split{$0 == ","}.map { String($0) }
     var result = 0;
     
-    lines.forEach{ line in
-        var dir = 0
-        let curNum  = Int(line[line.index(line.startIndex, offsetBy: 1)...]) ?? 0
-        if line.contains("R"){
-            dir = -1
-        }else{
-            dir = 1
+    ranges.forEach{ range in
+        print(range)
+        //let curNum  = Int(line[line.index(line.startIndex, offsetBy: 1)...]) ?? 0
+        let pair = range.split{$0 == "-"}.map { Int($0) }
+        print(pair)
+        if let start: Int = pair[0]{
+            if let end: Int = pair[1]{
+                
+                for i in start...end {
+                    let valid = isValid(num: i)
+                    result += valid ? 0 : i
+                    if(!valid){print(i)}
+                }
+            }
         }
-        for _ in 0..<curNum{
-            num = (num + dir) % 100
-            if num == 0{result+=1}
-        }
+        
+        
     }
     return String(result)
 }
