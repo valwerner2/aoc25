@@ -16,7 +16,7 @@ func isEmtpy(grid: [[String]], x: Int, y: Int) -> Bool{
 }
 
 func processString(str: String) -> String{
-    let grid = str.split{$0.isNewline}.map { line in
+    var grid = str.split{$0.isNewline}.map { line in
         line.map{String($0) }
     }
     var result = 0
@@ -24,17 +24,24 @@ func processString(str: String) -> String{
     
     let dirs: [(Int, Int)] = [(0, -1), (1, -1), (1, 0), (1, 1)]
     
-    for y in grid.indices {
-        for x in grid[y].indices {
-            count = 0
-            if(grid[y][x] == "@"){
-                dirs.forEach{ currentDir in
-                    if(!isEmtpy(grid: grid, x: x + currentDir.0, y: y + currentDir.1)){count += 1}
-                    if(!isEmtpy(grid: grid, x: x - currentDir.0, y: y - currentDir.1)){count += 1}
+    var nothingFound = false
+    while(!nothingFound){
+        nothingFound = true
+        for y in grid.indices {
+            for x in grid[y].indices {
+                count = 0
+                if(grid[y][x] == "@"){
+                    dirs.forEach{ currentDir in
+                        if(!isEmtpy(grid: grid, x: x + currentDir.0, y: y + currentDir.1)){count += 1}
+                        if(!isEmtpy(grid: grid, x: x - currentDir.0, y: y - currentDir.1)){count += 1}
+                    }
+                    if count < 4 {
+                        result += 1
+                        nothingFound = false
+                        grid[y][x] = "."
+                    }
                 }
-                if count < 4 {result += 1}
             }
-            
         }
     }
     return String(result)
