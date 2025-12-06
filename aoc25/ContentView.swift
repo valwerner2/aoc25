@@ -8,27 +8,35 @@
 import SwiftUI
 internal import UniformTypeIdentifiers
 
-func findMax(bank: [Int], n: Int) -> String {
-    if bank.isEmpty || n == 0 {return ""}
-    if let currentMax = bank.dropLast(n - 1).max(){
-        if let indexMax = bank.firstIndex(of: currentMax){
-            return String(currentMax) + String(findMax(bank: Array(bank.dropFirst(indexMax + 1)), n: n - 1))
-        }
+func isEmtpy(grid: [[String]], x: Int, y: Int) -> Bool{
+    if(!grid.indices.contains(y) || !grid[y].indices.contains(x)){
+        return true
     }
-    return ""
+    return grid[y][x] == "."
 }
 
 func processString(str: String) -> String{
-    let banks = str.split{$0.isNewline}.map { String($0) }
-    var result = 0;
+    let grid = str.split{$0.isNewline}.map { line in
+        line.map{String($0) }
+    }
+    var result = 0
+    var count = 0
     
+    let dirs: [(Int, Int)] = [(0, -1), (1, -1), (1, 0), (1, 1)]
     
-    banks.forEach{ bank in
-        let intBank = bank.compactMap{Int(String($0))}
-        
-        result += Int(findMax(bank: intBank, n: 12)) ?? 0
-        
+    for y in grid.indices {
+        for x in grid[y].indices {
+            count = 0
+            if(grid[y][x] == "@"){
+                dirs.forEach{ currentDir in
+                    if(!isEmtpy(grid: grid, x: x + currentDir.0, y: y + currentDir.1)){count += 1}
+                    if(!isEmtpy(grid: grid, x: x - currentDir.0, y: y - currentDir.1)){count += 1}
+                }
+                if count < 4 {result += 1}
+            }
+            
         }
+    }
     return String(result)
 }
 
