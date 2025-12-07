@@ -16,11 +16,10 @@ func processString(str: String) -> String{
         print(line)
     }
     var result = 0
-    let laser = "|"
     
     for x in grid[0].indices {
         if(grid[0][x] == "S"){
-            grid[1][x] = laser
+            grid[1][x] = "1"
         }
     }
     print("--------------------")
@@ -29,19 +28,31 @@ func processString(str: String) -> String{
     }
     for y in grid.indices.dropFirst(1).dropLast(){
         for x in grid[0].indices {
-            if grid[y][x] != laser {continue}
-            
-            if grid[y+1][x] == "." {grid[y+1][x] = laser}
-            else if grid[y+1][x] == "^"{
-                grid[y+1][x + 1] = laser
-                grid[y+1][x - 1] = laser
-                result += 1
+            if grid[y][x] != "." && grid[y][x] != "^" {
+                
+                if grid[y+1][x] == "." {grid[y+1][x] = grid[y][x]}
+                }
+            }
+        for x in grid[0].indices {
+            if grid[y][x] != "." && grid[y][x] != "^" {
+                let currentNum = Int(grid[y][x]) ?? 0
+                
+                if grid[y+1][x] == "^"{
+                    if grid[y+1][x + 1] == "." {grid[y+1][x + 1] = grid[y][x]}
+                    else{grid[y+1][x + 1] = String(currentNum + (Int(grid[y+1][x + 1]) ?? 0))}
+                    
+                    if grid[y+1][x - 1] == "." {grid[y+1][x - 1] = grid[y][x]}
+                    else{grid[y+1][x - 1] = String(currentNum + (Int(grid[y+1][x - 1]) ?? 0))}
+                }
             }
         }
         print("--------------------")
         grid.forEach{ line in
             print(line)
         }
+    }
+    for x in grid[0].indices {
+        result += Int(grid[grid.count - 1][x]) ?? 0
     }
     
     return String(result)
