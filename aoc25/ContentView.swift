@@ -9,50 +9,41 @@ import SwiftUI
 internal import UniformTypeIdentifiers
 
 func processString(str: String) -> String{
-    let grid = str.split{$0.isNewline}.map { line in
+    var grid = str.split{$0.isNewline}.map { line in
         line.map{String($0)}
     }
-    print(grid)
-    
-    var splitGrid: [[String]] = []
-    var lastFound = 0
-    var currentSearch = 1
-    while currentSearch <= grid[0].count {
-        if currentSearch == grid[0].count || grid[grid.count - 1][currentSearch] != " "{
-            var tempArr: [String] = []
-            
-            for x in lastFound..<currentSearch - (currentSearch == grid[0].count ? 0 : 1){
-                var tempStr = ""
-                for y in grid.indices.dropLast() {
-                    tempStr += grid[y][x]
-                }
-                tempArr.append(tempStr.replacingOccurrences(of: " ", with: ""))
-            }
-            tempArr.append(grid[grid.count - 1][lastFound])
-            splitGrid.append(tempArr)
-            lastFound = currentSearch
-        }
-        currentSearch += 1
+    grid.forEach{ line in
+        print(line)
     }
-    print(splitGrid)
-    
     var result = 0
+    let laser = "|"
     
-    for y in splitGrid.indices {
-        var localResult = Int(splitGrid[y][0]) ?? 0
-        let op = splitGrid[y][splitGrid[y].count - 1]
-        for x in splitGrid[y].indices.dropLast().dropFirst() {
-        
-            if op == "+"{
-                localResult += Int(splitGrid[y][x]) ?? 0
-            }
-            else if op == "*"{
-                localResult *= Int(splitGrid[y][x]) ?? 0
+    for x in grid[0].indices {
+        if(grid[0][x] == "S"){
+            grid[1][x] = laser
+        }
+    }
+    print("--------------------")
+    grid.forEach{ line in
+        print(line)
+    }
+    for y in grid.indices.dropFirst(1).dropLast(){
+        for x in grid[0].indices {
+            if grid[y][x] != laser {continue}
+            
+            if grid[y+1][x] == "." {grid[y+1][x] = laser}
+            else if grid[y+1][x] == "^"{
+                grid[y+1][x + 1] = laser
+                grid[y+1][x - 1] = laser
+                result += 1
             }
         }
-        result += localResult
+        print("--------------------")
+        grid.forEach{ line in
+            print(line)
+        }
     }
-    print(result)
+    
     return String(result)
 }
 
