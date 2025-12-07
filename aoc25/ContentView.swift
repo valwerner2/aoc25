@@ -8,42 +8,29 @@
 import SwiftUI
 internal import UniformTypeIdentifiers
 
-func isEmtpy(grid: [[String]], x: Int, y: Int) -> Bool{
-    if(!grid.indices.contains(y) || !grid[y].indices.contains(x)){
-        return true
-    }
-    return grid[y][x] == "."
-}
-
 func processString(str: String) -> String{
-    var grid = str.split{$0.isNewline}.map { line in
-        line.map{String($0) }
+    let grid = str.split{$0.isNewline}.map { line in
+        line.split(separator: " ").map{String($0)}
     }
+    print(grid)
+    
     var result = 0
-    var count = 0
     
-    let dirs: [(Int, Int)] = [(0, -1), (1, -1), (1, 0), (1, 1)]
-    
-    var nothingFound = false
-    while(!nothingFound){
-        nothingFound = true
-        for y in grid.indices {
-            for x in grid[y].indices {
-                count = 0
-                if(grid[y][x] == "@"){
-                    dirs.forEach{ currentDir in
-                        if(!isEmtpy(grid: grid, x: x + currentDir.0, y: y + currentDir.1)){count += 1}
-                        if(!isEmtpy(grid: grid, x: x - currentDir.0, y: y - currentDir.1)){count += 1}
-                    }
-                    if count < 4 {
-                        result += 1
-                        nothingFound = false
-                        grid[y][x] = "."
-                    }
-                }
+    for x in grid[0].indices {
+        var localResult = Int(grid[0][x]) ?? 0
+        for y in grid.indices.dropLast().dropFirst() {
+            
+            if grid[grid.count - 1][x] == "+"{
+                localResult += Int(grid[y][x]) ?? 0
+            }
+                if grid[grid.count - 1][x] == "*"{
+                localResult *= Int(grid[y][x]) ?? 0
             }
         }
+        result += localResult
     }
+    
+    
     return String(result)
 }
 
