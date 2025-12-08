@@ -53,16 +53,14 @@ func processString(str: String) -> String{
     
     var result = 0
     
-    let amountToDo = 1000
-    for i in 0..<amountToDo{
-        print(vecPairs[i])
-    }
-    
-    
     var circuits: [[Vec3]] = []
     
-    for currentRun in 0..<amountToDo {
+    var currentRun = 0
+    
+    var lastPair = vecPairs[0]
+    repeat {
         //check if one of the pairs already is part of circuit
+        lastPair = vecPairs[currentRun]
         
         var containsFirst = false
         var containsSecond = false
@@ -86,7 +84,7 @@ func processString(str: String) -> String{
         
         if let iFirst = indexFirst, let iSecond = indexSecond, iFirst != iSecond{
             circuits[iFirst] = Array(Set(circuits[iFirst] + circuits[iSecond]))
-            circuits[iSecond] = []
+            circuits.remove(at: iSecond)
         }
         else if containsFirst, !containsSecond, let iFirst = indexFirst{
             circuits[iFirst].append(vecPairs[currentRun].1)
@@ -97,21 +95,11 @@ func processString(str: String) -> String{
         else if indexFirst == nil && indexSecond == nil{
             circuits.append([vecPairs[currentRun].0, vecPairs[currentRun].1])
         }
-    }
-    circuits.sort {a, b in
-        return a.count > b.count
-    }
+        currentRun += 1
+    } while circuits[0].count < vecs.count
     
-    circuits.forEach { curr in
-        print(curr.count)
-    }
-    
-    result = circuits[0].count
-    for i in 1..<3{
-        result *= circuits[i].count
-    }
-    
-    
+    print(lastPair)
+    result = lastPair.0.x * lastPair.1.x
     let end = CFAbsoluteTimeGetCurrent()
     let elapsedMs = (end - start) * 1000
     print("Processing took \(elapsedMs) ms")
